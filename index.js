@@ -15,6 +15,15 @@ const io = new Server(server, {
   }
 })
 
+io.on('connection', (socket) => {
+  console.log(`User conncted: ${socket.id}`);
+
+  socket.on('join chat', (data) => {
+    socket.join(data);
+    console.log(`User with ID: ${socket.id} has data: ${data}`);
+  })
+})
+
 server.listen(5000, () => {
   console.log("Server is running...");
 })
