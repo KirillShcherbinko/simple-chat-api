@@ -4,6 +4,7 @@ import cors from "cors";
 import { Server } from "socket.io";
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 
@@ -24,6 +25,6 @@ io.on('connection', (socket) => {
   })
 })
 
-server.listen(5000, () => {
+server.listen(PORT, () => {
   console.log("Server is running...");
 })
