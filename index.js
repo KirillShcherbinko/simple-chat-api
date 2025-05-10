@@ -20,7 +20,9 @@ const io = new Server(server, {
     origin: "*",
     methods: ["GET", "POST"],
   },
+  transports: ["websocket", "polling"],
 });
+
 
 const getTimestamp = () => {
   const newDate = new Date();
@@ -60,12 +62,13 @@ io.on("connect", (socket) => {
     io.emit("receive message", {
       type: "system",
       data: {
+        id: socket.id,
         text: `${username} joined the chat at ${timestamp}`,
         timestamp: timestamp,
       },
     });
 
-    console.log(`User with ID: ${socket.id} joined with username: ${data.data.username}`);
+    console.log(`User with ID: ${socket.id} joined with username: ${data.text}`);
   });
 
   ////////// Отправка сообщения //////////
@@ -93,6 +96,7 @@ io.on("connect", (socket) => {
     io.emit("receive message", {
       type: "user",
       data: {
+        id: socket.id,
         username: data.username,
         text: text,
         timestamp: timestamp,
@@ -105,13 +109,16 @@ io.on("connect", (socket) => {
     console.log(`User Disconnected: ${socket.id}`);
 
     const timestamp = getTimestamp();
-    io.emit("receive message", {
-      type: "system",
-      data: {
-        text: `${socket.username} left the chat at ${timestamp}`,
-        timestamp: timestamp,
-      },
-    });
+    if (socket.username) {
+      io.emit("receive message", {
+        type: "system",
+        data: {
+          id: socket.id,
+          text: `${socket.username} left the chat at ${timestamp}`,
+          timestamp: timestamp,
+        },
+      });
+    }
   });
 });
 
